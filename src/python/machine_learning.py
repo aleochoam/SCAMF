@@ -1,18 +1,11 @@
-import numpy as np
 from sklearn import tree
 from sklearn.model_selection import train_test_split
+from sklearn.externals import joblib
 
 
 class Classifier(object):
     def __init__(self):
-        self.tree = tree.DecisionTreeClassifier(max_depth=3)
-
-    def importar_datos(self):
-        static = np.random.randint(200, size=(100, 5))
-        walking = np.random.randint(201, high=500, size=(100, 5))
-        running = np.random.randint(501, high=1023, size=(100, 5))
-
-        return (static, walking, running)
+        self.dt_class = tree.DecisionTreeClassifier(max_depth=3)
 
     def train_model(self, X):
         X_train, X_test, y_train, y_test = train_test_split(
@@ -22,3 +15,10 @@ class Classifier(object):
 
     def predric(self, X):
         return self.dt_class.predict(X)
+
+    def export_model(self, name):
+        joblib.dump(self.dt_class, '{}.pkl'.format(name))
+
+
+def create_model_from_file(name):
+    return joblib.load(name)
