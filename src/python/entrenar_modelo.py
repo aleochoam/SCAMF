@@ -1,12 +1,6 @@
-import serial
 import pandas as pd
 from machine_learning import Classifier
-
-
-def create_arduino():
-    arduino_port = '/dev/ttyACM0'
-    arduino = serial.Serial(arduino_port)
-    return arduino
+from arduino import create_arduino
 
 
 def create_model():
@@ -16,22 +10,29 @@ def create_model():
 
 def collect_data(arduino):
     data_aceleracion = []
-    data_proximidad = []
     print("Control + c para parar la recoleccion de datos")
+    arduino.write(b's')
+    arduino.readline()
     try:
         while True:
             data_in = arduino.readline()
             data_in = data_in.decode("utf-8").strip()
 
-            if "a" in data_in:
-                data_aceleracion.append(data_in.replace("a", ""))
-            else:
-                data_proximidad.append(data_in.replace("p", ""))
-            print(data_aceleracion, data_proximidad)
+            if "Ac" in data_in:
+                # los datos llegan en aceleración X Y Z
+                data_in = data_in.replace("=", "")
+                data_in = data_in.split("|")
+                data_in = [x[5:] for x in data_in]
+                data_in = [x.strip() for x in data_in]
+                print(data_in)
+                data_aceleracion.append(data_in)
+            # else:
+                # data_proximidad.append(data_in.replace("p", ""))
+            # print(data_aceleracion, data_proximidad)
 
     except KeyboardInterrupt:
         print("Finalizado tomar datos")
-        return data_aceleracion, data_proximidad
+        return data_aceleracion
 
 
 # Toma una lista de datos y la convierte en un DataFrame con una etiqueta dada
@@ -42,26 +43,25 @@ def label_data(data, label):
 
 
 def menu():
-    label = input("Ingrese tipo de datos que desea leer: \n")
+    # label = input("Ingrese tipo de datos que desea leer: \nCAMINANDO\nESTATICO")
+    pass
 
 
 def main():
     arduino = create_arduino()
     print("Empezando a leer datos")
-    data_aceleracion, data_proximidad = collect_data(arduino)
+    data_aceleracion = collect_data(arduino)
 
     # Etiquetar los datos
     data_aceleracion = label_data(data_aceleracion, "NORMAL")
-    data_proximidad = label_data(data_proximidad, "NORMAL")
+    print(data_aceleracion)
 
     acceleration_classifier = create_model()
-    distance_classifier = create_model()
 
     acceleration_classifier.train_model(data_aceleracion)
-    distance_classifier.train_model(data_proximidad)
 
-    acceleration_classifier.export_model("aceleration_clf")
-    distance_classifier.export_model("distance_clf")
+    acceleration_classifier.export_model("acceleration_clf")
+    arduino.close()
 
 
 if __name__ == '__main__':
