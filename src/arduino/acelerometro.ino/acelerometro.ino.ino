@@ -12,8 +12,7 @@ void setup(){
   Wire.write(0);     // set to zero (wakes up the MPU-6050)
   Wire.endTransmission(true);
   Serial.begin(9600);
-  while(!Serial.available());
-  Serial.read();
+  
 }
 void loop(){
   Wire.beginTransmission(MPU_addr);
@@ -34,6 +33,5 @@ void loop(){
   //Serial.print(" | GyX = "); Serial.print(GyX);
   //Serial.print(" | GyY = "); Serial.print(GyY);
   //Serial.print(" | GyZ = "); Serial.println(GyZ);
-  delay(333);
 }
 

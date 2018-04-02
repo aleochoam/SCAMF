@@ -10,18 +10,24 @@ def create_model():
 
 def collect_data(arduino):
     data_aceleracion = []
-    print("Control + c para parar la recoleccion de datos")
-    arduino.write(b's')
+    arduino.flush()
     arduino.readline()
+    print("Control + c para parar la recoleccion de datos")
     try:
         while True:
             data_in = arduino.readline()
-            data_in = data_in.decode("utf-8").strip()
+            try:
+                data_in = data_in.decode("utf-8")
+            except Exception:
+                continue
 
             if "Ac" in data_in:
                 # los datos llegan en aceleración X Y Z
                 data_in = data_in.replace("=", "")
                 data_in = data_in.split("|")
+                if len(data_in) != 3:
+                    continue
+
                 data_in = [x[5:] for x in data_in]
                 data_in = [x.strip() for x in data_in]
                 print(data_in)
@@ -42,6 +48,10 @@ def label_data(data, label):
     return data
 
 
+def join_data(A, B):
+    return pd.concat((A, B), axis=0).reset_index(drop=True)
+
+
 def menu():
     # label = input("Ingrese tipo de datos que desea leer: \nCAMINANDO\nESTATICO")
     pass
@@ -49,16 +59,20 @@ def menu():
 
 def main():
     arduino = create_arduino()
-    print("Empezando a leer datos")
-    data_aceleracion = collect_data(arduino)
-
-    # Etiquetar los datos
-    data_aceleracion = label_data(data_aceleracion, "NORMAL")
-    print(data_aceleracion)
-
     acceleration_classifier = create_model()
 
-    acceleration_classifier.train_model(data_aceleracion)
+    print("Empezando a leer datos normales")
+    aceleracion_normal = collect_data(arduino)
+    aceleracion_normal = label_data(aceleracion_normal, "NORMAL")
+
+    input("Empezar a leer datos anormales")
+    aceleracion_anormal = collect_data(arduino)
+    aceleracion_anormal = label_data(aceleracion_anormal, "ANORMAL")
+
+    X = join_data(aceleracion_normal, aceleracion_anormal)
+    print(X)
+
+    acceleration_classifier.train_model(X)
 
     acceleration_classifier.export_model("acceleration_clf")
     arduino.close()
