@@ -21,7 +21,7 @@ ap.add_argument(
 args = vars(ap.parse_args())
 
 # load the image
-image = cv2.imread(args["image"])
+image = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
 orig = image.copy()
 
 # pre-process the image for classification

@@ -103,3 +103,5 @@ ENV/
 # Custom files
 src/python/*.pkl
 src/deep_learning/scamf/nuevas-fotos/
+src/deep_learning/scamf/final/
+src/deep_learning/scamf/keras/old/
