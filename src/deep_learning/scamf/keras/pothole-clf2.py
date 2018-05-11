@@ -8,13 +8,15 @@ import cv2
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
-    "-m", "--model", required=True, help="path to trained model model")
+    "-m", "--model", default="pothole-final-clf.model",
+    help="path to trained model model")
 
 args = vars(ap.parse_args())
 
-# capture = cv2.VideoCapture("../nuevas-fotos/todo/video7.mp4")
+capture = cv2.VideoCapture("../nuevas-fotos/todo/video1.mp4")
+# capture = cv2.VideoCapture("../nuevas-fotos/output.avi")
 # capture = cv2.VideoCapture("./examples/video1.mp4")
-capture = cv2.VideoCapture(1)
+# capture = cv2.VideoCapture(1)
 
 # load the trained convolutional neural network
 print("[INFO] loading network...")
@@ -26,6 +28,8 @@ while True:
         break
 
     # load the image
+
+    # image = imutils.rotate(image, angle=180)
     orig = image.copy()
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -40,6 +44,12 @@ while True:
 
     # build the label
     label = "Pothole" if pothole > not_pothole else "Not pothole"
+    found = False
+    if label == "Pothole":
+        found = True
+    else:
+        found = False
+
     proba = pothole if pothole > not_pothole else not_pothole
     label = "{}: {:.2f}%".format(label, proba * 100)
 
@@ -50,8 +60,10 @@ while True:
 
     # show the output image
     cv2.imshow("Output", output)
-    if label == "Pothole":
-        cv2.waitKey(0)
+
+    if found:
+        cv2.imshow("POTHOLE", output)
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

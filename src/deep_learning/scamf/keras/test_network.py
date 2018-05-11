@@ -21,10 +21,11 @@ ap.add_argument(
 args = vars(ap.parse_args())
 
 # load the image
-image = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
+image = cv2.imread(args["image"])
 orig = image.copy()
 
 # pre-process the image for classification
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 image = cv2.resize(image, (64, 64))
 image = image.astype("float") / 255.0
 image = img_to_array(image)
