@@ -103,4 +103,5 @@ ENV/
 # Custom files
 **/*.jpg
 **/*.avi
+**/*.mp4
 **/*.jpeg
