@@ -8,49 +8,51 @@
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
 // Sensor de luz
-BH1750 lightMeter;
+//BH1750 lightMeter;
 
 // Sensor de aceleración
 ADXL345 adxl = ADXL345();
 
 void setup() {
   Serial.begin(9600);
-  Wire.begin();
+  //Wire.begin();
 
   lox.begin();
-  lightMeter.begin();
+//  lightMeter.begin();
   adxl.powerOn();            
   adxl.setRangeSetting(16); 
 }
 
 void loop() {
-  Serial.print("distancia,");
+  Serial.print("distancia:");
   for(int i = 0; i<5; i++){
     Serial.print(leerDistancia());
     Serial.print(",");
+    delay(10);
   }
   Serial.println();
 
-  Serial.print("aceleracion");
+  Serial.print("aceleracion:");
   for(int i = 0; i<5; i++){
     Serial.print(leerAceleracion('z'));
     Serial.print(",");
+    delay(10);
   }
   Serial.println();
+
+  //uint16_t luz = lightMeter.readLightLevel();
+  // Hacer control de luz
+
+  delay(333);
+  
 }
 
 int leerDistancia(){
   VL53L0X_RangingMeasurementData_t measure;
-  do{
-    lox.rangingTest(&measure, false);  
-  }while(measure.RangeStatus != 4);
-
+  lox.rangingTest(&measure, false);  
   return measure.RangeMilliMeter;
 }
 
-uint16_t leerLuz(){
-  return lightMeter.readLightLevel();
-}
 
 int leerAceleracion(char eje){
   int x, y, z;

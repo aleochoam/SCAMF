@@ -17,15 +17,15 @@ def collect_data(arduino):
     try:
         while True:
             data_in = arduino.readline()
-            
+
             try:
                 data_in = data_in.decode("utf-8")
             except Exception:
                 continue
             # los datos llegan en aceleración X Y Z
-            
+
             data_in = data_in.split(",")
-            
+
             if len(data_in) != 4:
                 continue
             data_in = data_in[:3]
