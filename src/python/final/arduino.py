@@ -40,3 +40,6 @@ class Arduino(object):
 
         except Exception:
             return none_data
+
+    def write(self, msg):
+        self.arduino.write(b'msg')

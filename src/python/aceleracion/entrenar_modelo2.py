@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
 from machine_learning import Classifier
-from arduino import create_arduino
+
+
+def open_file(file_path):
+    return open(file_path, "r")
 
 
 def create_model():
@@ -63,16 +66,18 @@ def join_data(A, B):
 
 
 def main():
-    arduino = create_arduino()
+    file_not_pothole = open_file("../escribir_archivo/output.data")
+    file_pothole = open_file("../escribir_archivo/output.data")
+
     acceleration_classifier = create_model()
 
     print("Empezando a leer datos normales")
-    aceleracion_normal = collect_data(arduino)
+    aceleracion_normal = collect_data(file_not_pothole)
     features_normal = extract_features(aceleracion_normal)
     aceleracion_normal = label_data(features_normal, "NORMAL")
 
     input("Empezar a leer datos anormales")
-    aceleracion_anormal = collect_data(arduino)
+    aceleracion_anormal = collect_data(file_pothole)
     features_anormal = extract_features(aceleracion_anormal)
     aceleracion_anormal = label_data(features_anormal, "ANORMAL")
 
@@ -82,7 +87,8 @@ def main():
     acceleration_classifier.train_model(X)
 
     acceleration_classifier.export_model("acceleration_clf2")
-    arduino.close()
+    file_not_pothole.close()
+    file_pothole.close()
 
 
 if __name__ == '__main__':

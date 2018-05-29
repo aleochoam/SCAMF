@@ -28,15 +28,12 @@ def main():
                 prediction = distancia_clf.predict(data)
             else:
                 prediction = None
-                continue
 
             # print(sensor, prediction)
             if prediction == "ANORMAL":
                 print(sensor, " detectó falla en la vía")
 
-            ret, image = imagen_clf.collect_data()
-            if not ret:
-                continue
+            image = imagen_clf.collect_data()
 
             cv2.imshow("Camara", image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -48,9 +45,15 @@ def main():
             if label == "Pothole":
                 print("camara detectó falla en la vía")
 
+            if prediction or label == "Pothole":
+                arduino_serial.write(1)
+
     except KeyboardInterrupt:
-        imagen_clf.release()
         print("Finalizado")
+    except Exception:
+        pass
+    finally:
+        imagen_clf.release()
 
 
 if __name__ == '__main__':

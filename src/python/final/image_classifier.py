@@ -4,16 +4,17 @@ import numpy as np
 import imutils
 import cv2
 import classifier
+import webcam_stream
 
 
 class ImageClassifier(classifier.Classifier):
     """docstring for ImageClassifier"""
     def __init__(self, model, camera_port):
         super(ImageClassifier, self).__init__(load_model(model))
-        self.capture = cv2.VideoCapture(camera_port)
+        self.vs = webcam_stream.WebcamVideoStream().start()
 
     def collect_data(self):
-        return self.capture.read()
+        return self.vs.read()
 
     def extract_features(self, image):
         # image = imutils.rotate(image, angle=180)
@@ -52,5 +53,6 @@ class ImageClassifier(classifier.Classifier):
         cv2.imshow("image", image)
 
     def release(self):
-        self.capture.release()
+        self.vs.stop()
+        # self.capture.release()
         cv2.destroyAllWindows()

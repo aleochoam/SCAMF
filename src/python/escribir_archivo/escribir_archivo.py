@@ -1,9 +1,10 @@
 import serial
 import numpy as np
 
+
 def create_arduino():
     arduino_port = '/dev/ttyACM0'
-    arduino = serial.Serial(arduino_port)
+    arduino = serial.Serial(arduino_port, timeout=1)
     return arduino
 
 
@@ -13,7 +14,7 @@ def create_file(filename):
 
 def write_file(file, data):
     if type(data) == str:
-        file.write(text)
+        file.write(data)
         file.write("\n")
     elif type(data) == np.ndarray:
         file.write(" ".join(map(str, data)))
@@ -32,7 +33,6 @@ def clean_data(data_in):
         print("No se pudo leer los datos")
         exit()
 
-
     data_in = data_in.split(",")
 
     if len(data_in) != data_size + 1:
@@ -43,17 +43,47 @@ def clean_data(data_in):
     data_in = np.array(data_in)
     return data_in
 
-def main():
+
+def dato_individual():
     arduino = create_arduino()
-    file = create_file("output.data")
+    arduino.flush()
+    file = create_file("pothole.data")
+
     input("Presione enter para escribir datos...")
 
-    arduino.write(b"start")
+    arduino.write(b'0')
+    arduino.flush()
+    print("Escritura realizada")
     data_in = arduino.readline()
+    print("Datos recibidos")
     data_in = clean_data(data_in)
     write_file(file, data_in)
     file.close()
+    arduino.close()
+
+
+def escritura_constante():
+    arduino = create_arduino()
+    arduino.flush()
+    file = create_file("not_pothole.data")
+
+    input("Presione enter para escribir datos...")
+    try:
+        while True:
+            arduino.write(b'0')
+            arduino.flush()
+            # print("Escritura realizada")
+            data_in = arduino.readline()
+            print("Datos recibidos")
+            data_in = clean_data(data_in)
+            write_file(file, data_in)
+
+    except KeyboardInterrupt as e:
+        print("Escritura finalizada")
+        file.close()
+        arduino.close()
 
 
 if __name__ == '__main__':
-    main()
+    escritura_constante()
+    # dato_individual()
