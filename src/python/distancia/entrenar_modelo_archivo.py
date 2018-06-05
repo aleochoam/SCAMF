@@ -32,7 +32,6 @@ def collect_data(file):
 def extract_features(data_list):
     data_features = []
     for data_row in data_list:
-        print(data_row)
         average = np.average(data_row)
         std = np.std(data_row)
         maximum = np.amax(data_row)
@@ -53,8 +52,8 @@ def join_data(A, B):
 
 
 def main():
-    file_not_pothole = open_file("../escribir_archivo/not_pothole.data")
-    file_pothole = open_file("../escribir_archivo/pothole.data")
+    file_not_pothole = open_file("./not_pothole.data")
+    file_pothole = open_file("./pothole.data")
 
     acceleration_classifier = create_model()
 
@@ -73,7 +72,7 @@ def main():
 
     acceleration_classifier.train_model(X)
 
-    acceleration_classifier.export_model("acceleration_from_file")
+    acceleration_classifier.export_model("distance_from_file")
     file_not_pothole.close()
     file_pothole.close()
 

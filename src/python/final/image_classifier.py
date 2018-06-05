@@ -11,7 +11,8 @@ class ImageClassifier(classifier.Classifier):
     """docstring for ImageClassifier"""
     def __init__(self, model, camera_port):
         super(ImageClassifier, self).__init__(load_model(model))
-        self.vs = webcam_stream.WebcamVideoStream().start()
+        self.vs = webcam_stream.WebcamVideoStream(src=camera_port).start()
+        # self.vs = cv2.VideoCapture(camera_port)
 
     def collect_data(self):
         return self.vs.read()

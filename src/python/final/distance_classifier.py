@@ -10,10 +10,11 @@ class DistanceClassifier(classifier.Classifier):
 
     def extract_features(self, data):
         average = np.average(data)
-        maximo = np.amax(data)
-        minimo = np.amax(data)
+        std = np.std(data)
+        maximum = np.amax(data)
+        minimun = np.amin(data)
 
-        return (average, maximo, minimo, maximo - minimo)
+        return (average, std, maximum, minimun, maximum-minimun)
 
 
 def create_model_from_file(name):

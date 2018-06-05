@@ -4,7 +4,7 @@ import numpy as np
 
 def create_arduino():
     arduino_port = '/dev/ttyACM0'
-    arduino = serial.Serial(arduino_port, timeout=1)
+    arduino = serial.Serial(arduino_port)
     return arduino
 
 
@@ -28,10 +28,11 @@ def close_file(file):
 def clean_data(data_in):
     data_size = 5
     try:
+        print(data_in)
         data_in = data_in.decode("utf-8")
     except Exception:
         print("No se pudo leer los datos")
-        exit()
+        return []
 
     data_in = data_in.split(",")
 
@@ -65,15 +66,18 @@ def dato_individual():
 def escritura_constante():
     arduino = create_arduino()
     arduino.flush()
-    file = create_file("not_pothole.data")
+    file = create_file("pothole.data")
 
     input("Presione enter para escribir datos...")
     try:
         while True:
-            arduino.write(b'0')
             arduino.flush()
-            # print("Escritura realizada")
+            arduino.write(b'j')
+            print("Escritura realizada")
             data_in = arduino.readline()
+            if data_in == b'':
+                continue
+
             print("Datos recibidos")
             data_in = clean_data(data_in)
             write_file(file, data_in)

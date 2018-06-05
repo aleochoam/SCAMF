@@ -14,9 +14,9 @@ ap.add_argument(
 args = vars(ap.parse_args())
 
 # capture = cv2.VideoCapture("../nuevas-fotos/todo/video1.mp4")
-capture = cv2.VideoCapture("../nuevas-fotos/universidad1.avi")
+# capture = cv2.VideoCapture("../nuevas-fotos/universidad1.avi")
 # capture = cv2.VideoCapture("./examples/video1.mp4")
-# capture = cv2.VideoCapture(1)
+capture = cv2.VideoCapture(1)
 
 # load the trained convolutional neural network
 print("[INFO] loading network...")
@@ -29,7 +29,7 @@ while True:
 
     # load the image
 
-    image = imutils.rotate(image, angle=180)
+    # image = imutils.rotate(image, angle=180)
     orig = image.copy()
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 

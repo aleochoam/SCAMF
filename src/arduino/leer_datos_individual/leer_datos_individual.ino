@@ -1,24 +1,26 @@
 // #include <SparkFun_ADXL345.h>
 #include "Adafruit_VL53L0X.h"
 
-// ADXL345 adxl = ADXL345();
+#include <Adafruit_Sensor.h>
+#include <Adafruit_ADXL345_U.h>
+
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
+Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(1010);
+
 void setup() {
 
   Serial.begin(9600);
-  // adxl.powerOn();
-  // adxl.setRangeSetting(16);
   lox.begin();
+  accel.setRange(ADXL345_RANGE_16_G);
 
 }
 
 void loop() {
   if(Serial.available()){
-    delay(500);
     Serial.read();
     for(int i = 0; i<5; i++){
-      // Serial.print(leerAceleracion('z'));
-      Serial.print(leerDistancia());
+      Serial.print(leerAceleracion('z'));
+      //Serial.print(leerDistancia());
       Serial.print(",");
       delay(10);
     }
@@ -27,23 +29,26 @@ void loop() {
 
 }
 
-// int leerAceleracion(char eje){
-//   int x, y, z;
-//   adxl.readAccel(&x, &y, &z);
+double leerAceleracion(char eje){
+  double x, y, z;
+  sensors_event_t event;
+  accel.getEvent(&event);
 
-//   if(eje == 'x')
-//     return x;
-//   else if(eje == 'y')
-//     return y;
-//   else
-//     return z;
-// }
-
+  if(eje == 'x')
+    return event.acceleration.x;
+  else if(eje == 'y')
+    return event.acceleration.y;
+  else
+    return event.acceleration.z;
+} 
 
 
 int leerDistancia(){
   VL53L0X_RangingMeasurementData_t measure;
-  lox.rangingTest(&measure, false); // pass in 'true' to get debug data printout!
+  lox.rangingTest(&measure, false);
+  while(measure.RangeMilliMeter > 5000){
+    lox.rangingTest(&measure, false);
+  }
   return measure.RangeMilliMeter;
 }
 

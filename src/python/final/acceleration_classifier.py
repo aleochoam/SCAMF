@@ -12,9 +12,9 @@ class AccelerationClassifier(classifier.Classifier):
         average = np.average(data)
         std = np.std(data)
         maximum = np.amax(data)
-        minumum = np.amin(data)
+        minimun = np.amin(data)
 
-        return (average, std, maximum, maximum-minumum)
+        return (average, std, maximum, minimun, maximum-minimun)
 
 
 def create_model_from_file(name):

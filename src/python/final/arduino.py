@@ -10,16 +10,15 @@ class Arduino(object):
         super(Arduino, self).__init__()
         self.serial_port = serial_port
         self.arduino = serial.Serial(self.serial_port)
-        # self.arduino = open("./test/ejemplo.txt", "r")
 
     def collect_data(self):
         try:
             data_in = self.arduino.readline()
+            data_in = data_in.decode("utf-8")
 
             if data_in == "":
                 return none_data
 
-            data_in = data_in.decode("utf-8")
             data_in = data_in.split(":")
 
             if len(data_in) != 2:
@@ -28,6 +27,9 @@ class Arduino(object):
             sensor = data_in[0]
             data_in = data_in[1]
             data_in = data_in.split(",")
+
+            if sensor == "GPS":
+                return sensor, data_in
 
             if len(data_in) != 6:
                 return
